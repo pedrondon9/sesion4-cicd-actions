@@ -1,0 +1,38 @@
+name: Create Branch on README Update
+
+on:
+  push:
+    branches:
+      - main  # O el nombre de tu rama principal
+    paths:
+      - 'README.md'
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Necesario para crear ramas y hacer push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and Push New Branch
+        run: |
+          # Generar un nombre de rama único basado en el timestamp
+          BRANCH_NAME="readme-update-$(date +'%Y%m%d-%H%M%S')"
+          
+          echo "Creando la rama: $BRANCH_NAME"
+          
+          # Crear la rama desde el commit actual
+          git checkout -b $BRANCH_NAME
+          
+          # Empujar la rama al repositorio remoto
+          git push origin $BRANCH_NAME
